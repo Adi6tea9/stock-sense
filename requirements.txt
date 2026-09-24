@@ -21,4 +21,3 @@ bs4
 unstructured
 jq
 duckduckgo-search
-pysqlite3-binary

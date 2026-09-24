@@ -1,4 +1,4 @@
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 import yfinance as yf
 from typing import Dict, Any, Optional, List
 import json
@@ -38,6 +38,19 @@ def retry_on_exception(retries=3, delay=1):
             return None
         return wrapper
     return decorator
+
+def sanitize_for_json(obj):
+    """Recursively replace NaN/Infinity with None so json.dumps produces valid JSON"""
+    if isinstance(obj, float):
+        if np.isnan(obj) or np.isinf(obj):
+            return None
+        return obj
+    elif isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_for_json(v) for v in obj]
+    else:
+        return obj
 
 class FinancialMetricsCalculator:
     @staticmethod
@@ -107,6 +120,7 @@ def stock_data_tool(args: Dict[str, str]) -> Dict[str, Any]:
             "technical_indicators": technical_indicators
         }
         
+        result = sanitize_for_json(result)
         logger.info(f"Successfully fetched stock data for {ticker}")
         return result
         
@@ -171,6 +185,7 @@ def financial_metrics_tool(args: Dict[str, str]) -> Dict[str, Any]:
             }
         }
         
+        result = sanitize_for_json(result)
         logger.info(f"Successfully calculated financial metrics for {ticker}")
         return result
         
@@ -229,4 +244,4 @@ financial_metrics_tool_instance = Tool(
     name="financial_metrics_tool",
     func=financial_metrics_tool,
     description="Calculates detailed financial metrics with comprehensive analysis"
-) 
+)

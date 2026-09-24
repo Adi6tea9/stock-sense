@@ -1,8 +1,8 @@
 # Fix for ChromaDB SQLite version issue
 import sys
 import os
-__import__('pysqlite3')
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+#__import__('pysqlite3')
+#sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 from crewai import Agent, Task, Crew, Process, LLM
 from crewai.tools import BaseTool
@@ -86,9 +86,9 @@ LLM_PROVIDERS = {
         "default_model": "claude-3-haiku-20240307"
     },
     "gemini": {
-        "models": ["gemini-1.5-pro-latest", "gemini-1.5-flash"],
+        "models": ["gemini-3.6-flash"],
         "api_key_env": "GEMINI_API_KEY",
-        "default_model": "gemini-1.5-flash"
+         "default_model": "gemini-3.6-flash"
     },
     "ollama": {
         "models": ["llama3.2", "mistral", "codellama", "llama2"],
@@ -238,7 +238,7 @@ class EnhancedAgent(Agent):
         retry=retry_if_exception_type(APIConnectionError),
         reraise=True
     )
-    def execute_task(self, task: Task, context: Optional[Dict[str, Any]] = None, **kwargs) -> str:
+    def execute_task(self, task: Task, context: Optional[Dict[str, Any]] = None, *args, **kwargs) -> str:
         """Execute a task with progress tracking and retry mechanism
         
         Args:
@@ -257,7 +257,7 @@ class EnhancedAgent(Agent):
             time.sleep(1)
             
             # Call parent's execute_task with proper arguments
-            result = super().execute_task(task=task, context=context)
+            result = super().execute_task(task, context, *args, **kwargs)
             self._callback.on_complete(result)
             return result
         except Exception as e:
@@ -656,7 +656,8 @@ class MarketAnalysisCrew:
                 agents=agents,
                 tasks=tasks,
                 process=Process.sequential,
-                verbose=True
+                verbose=True,
+                max_rpm=4
             )
             
             result = crew.kickoff()

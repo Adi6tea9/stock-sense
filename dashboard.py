@@ -1,19 +1,11 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
 import streamlit as st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 from market_analysis_crew import MarketAnalysisCrew, LLM_PROVIDERS, get_available_providers
 from datetime import datetime
-import numpy as np
-import plotly.express as px
 import json
-import time
 from typing import Any
-import os
 
 st.set_page_config(
     page_title="AI Stock Analysis Dashboard",
@@ -37,454 +29,272 @@ INVESTMENT_TERMS = {
     "ESG": "Environmental, Social, and Governance - A set of standards for a company's operations that socially conscious investors use to screen potential investments."
 }
 
+# ---------------------------------------------------------------------------
+# Styling — uses Streamlit's own theme variables so it looks right in both
+# light and dark mode, instead of hardcoding white/light colors.
+# ---------------------------------------------------------------------------
 st.markdown("""
     <style>
-        /* Main container styling */
-        .stApp {
-            max-width: 100%;
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+
+        .app-header {
+            background: linear-gradient(90deg, #1f77b4 0%, #4facfe 100%);
+            padding: 1.6rem 2rem;
+            border-radius: 14px;
+            margin-bottom: 1.5rem;
+        }
+        .app-header h1 {
+            color: white;
             margin: 0;
-            padding: 0;
+            font-size: 1.8rem;
+        }
+        .app-header p {
+            color: rgba(255,255,255,0.85);
+            margin: 0.25rem 0 0 0;
+            font-size: 0.95rem;
         }
 
-        /* Sidebar styling */
-        section[data-testid="stSidebar"] {
-            width: 300px !important;
-            background-color: #f8f9fa;
-            padding: 2rem;
-            position: fixed;
-            left: 0;
-            height: 100%;
-            border-right: 1px solid #e9ecef;
-        }
-
-        /* Main content area styling */
-        section[data-testid="stMainContent"] {
-            margin-left: 300px;
-            padding: 2rem;
-            max-width: calc(100% - 300px);
-        }
-
-        /* Card styling */
-        .metric-card {
-            background-color: #f0f2f6;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .analysis-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 10px 0;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
-        }
-
-        /* Headers and text styling */
-        .header-style {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #1f77b4;
-        }
-
-        .analysis-header {
-            color: #1f77b4;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        /* Tooltip styling */
         .term-tooltip {
             text-decoration: underline dotted;
             cursor: help;
         }
 
-        /* Code output styling */
-        .json-output {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-
-        /* Hide Streamlit branding */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-
-        /* Ensure content doesn't overlap with sidebar on smaller screens */
-        @media (max-width: 768px) {
-            section[data-testid="stMainContent"] {
-                margin-left: 0;
-                max-width: 100%;
-            }
-        }
-
-        /* Agent Chat styling */
-        .agent-chat {
-            max-height: 600px;
-            overflow-y: auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            margin: 10px 0;
-            border: 1px solid #e9ecef;
-        }
-        
         .agent-message {
-            padding: 15px;
-            margin: 10px 0;
+            padding: 12px 16px;
+            margin: 8px 0;
             border-radius: 10px;
-            background-color: #f8f9fa;
             border-left: 4px solid #1f77b4;
-            animation: fadeIn 0.5s ease-in;
+            background-color: rgba(31, 119, 180, 0.07);
         }
-        
         .agent-name {
-            font-weight: bold;
-            color: #1f77b4;
-            margin-bottom: 5px;
+            font-weight: 600;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            font-size: 0.9rem;
         }
-        
         .agent-timestamp {
-            font-size: 0.8em;
-            color: #666;
+            font-size: 0.75em;
+            opacity: 0.6;
         }
-        
         .agent-thinking {
-            color: #666;
             font-style: italic;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            opacity: 0.75;
         }
-        
-        .thinking-dots {
-            display: inline-block;
-            animation: thinking 1.5s infinite;
-        }
-        
         .agent-result {
-            margin-top: 10px;
+            margin-top: 8px;
             padding: 10px;
-            background-color: white;
-            border-radius: 5px;
-            border: 1px solid #e9ecef;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes thinking {
-            0% { content: '.'; }
-            33% { content: '..'; }
-            66% { content: '...'; }
+            border-radius: 6px;
+            background-color: rgba(127, 127, 127, 0.08);
         }
 
-        /* Tooltip styling */
-        .sidebar-tooltip {
-            color: #1f77b4;
-            font-size: 0.8em;
-            margin-top: 5px;
-            padding: 5px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            border: 1px solid #e9ecef;
+        .glossary-card {
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: rgba(127, 127, 127, 0.08);
+        }
+
+        .risk-pill {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
     </style>
 """, unsafe_allow_html=True)
 
+
 def format_json_output(data: dict) -> str:
-    """Format JSON data for better readability"""
     return json.dumps(data, indent=2)
 
+
 def add_tooltips_to_text(text: str) -> str:
-    """Add tooltips to technical terms in the text"""
     for term, definition in INVESTMENT_TERMS.items():
         if term in text:
             text = text.replace(term, f'<span class="term-tooltip" title="{definition}">{term}</span>')
     return text
 
+
 def create_candlestick_chart(stock_data):
-    """Create an interactive candlestick chart with volume"""
     dates = pd.to_datetime(stock_data["dates"])
     prices = stock_data["price_history"]
     volumes = stock_data["volume_history"]
-    
-    # Create figure with secondary y-axis
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
-                       vertical_spacing=0.03, subplot_titles=('Price', 'Volume'),
-                       row_heights=[0.7, 0.3])
 
-    # Add candlestick
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        vertical_spacing=0.03, subplot_titles=('Price', 'Volume'),
+        row_heights=[0.7, 0.3]
+    )
+
     fig.add_trace(go.Scatter(
-        x=dates,
-        y=prices,
-        mode='lines',
-        name='Price',
-        line=dict(color='#1f77b4')
+        x=dates, y=prices, mode='lines', name='Price',
+        line=dict(color='#1f77b4', width=2)
     ), row=1, col=1)
 
-    # Add volume bar chart
     fig.add_trace(go.Bar(
-        x=dates,
-        y=volumes,
-        name='Volume',
-        marker_color='#2ca02c'
+        x=dates, y=volumes, name='Volume', marker_color='#2ca02c'
     ), row=2, col=1)
 
-    # Add moving averages
     ma_data = stock_data["technical_indicators"]["moving_averages"]
     for ma_name, ma_values in ma_data.items():
         fig.add_trace(go.Scatter(
-            x=dates,
-            y=ma_values,
-            name=ma_name,
-            line=dict(dash='dash')
+            x=dates, y=ma_values, name=ma_name, line=dict(dash='dash', width=1.3)
         ), row=1, col=1)
 
-    # Update layout
     fig.update_layout(
-        height=800,
+        height=650,
         showlegend=True,
-        title_text="Price and Volume Analysis",
+        margin=dict(l=10, r=10, t=40, b=10),
+        template="plotly_dark",
         xaxis_rangeslider_visible=False
     )
-
     return fig
 
+
 def create_technical_indicators_chart(stock_data):
-    """Create technical indicators visualization"""
     dates = pd.to_datetime(stock_data["dates"])
-    
-    # Create figure with secondary y-axis
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
-                       vertical_spacing=0.05, subplot_titles=('RSI', 'MACD'))
 
-    # Add RSI
-    rsi_values = stock_data["technical_indicators"]["rsi"]
-    fig.add_trace(go.Scatter(
-        x=dates,
-        y=rsi_values,
-        name='RSI',
-        line=dict(color='#1f77b4')
-    ), row=1, col=1)
-
-    # Add MACD
-    macd_data = stock_data["technical_indicators"]["macd"]
-    fig.add_trace(go.Scatter(
-        x=dates,
-        y=macd_data["macd"],
-        name='MACD',
-        line=dict(color='#1f77b4')
-    ), row=2, col=1)
-    
-    fig.add_trace(go.Scatter(
-        x=dates,
-        y=macd_data["signal"],
-        name='Signal',
-        line=dict(color='#ff7f0e')
-    ), row=2, col=1)
-
-    # Update layout
-    fig.update_layout(
-        height=600,
-        showlegend=True,
-        title_text="Technical Indicators"
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        vertical_spacing=0.06, subplot_titles=('RSI', 'MACD')
     )
 
-    # Add RSI lines
+    rsi_values = stock_data["technical_indicators"]["rsi"]
+    fig.add_trace(go.Scatter(
+        x=dates, y=rsi_values, name='RSI', line=dict(color='#1f77b4')
+    ), row=1, col=1)
+
+    macd_data = stock_data["technical_indicators"]["macd"]
+    fig.add_trace(go.Scatter(
+        x=dates, y=macd_data["macd"], name='MACD', line=dict(color='#1f77b4')
+    ), row=2, col=1)
+    fig.add_trace(go.Scatter(
+        x=dates, y=macd_data["signal"], name='Signal', line=dict(color='#ff7f0e')
+    ), row=2, col=1)
+
     fig.add_hline(y=70, line_dash="dash", line_color="red", row=1, col=1)
     fig.add_hline(y=30, line_dash="dash", line_color="green", row=1, col=1)
 
+    fig.update_layout(
+        height=550,
+        showlegend=True,
+        margin=dict(l=10, r=10, t=40, b=10),
+        template="plotly_dark"
+    )
     return fig
 
+
 def display_metrics_dashboard(metrics):
-    """Display financial metrics in an organized dashboard"""
     cols = st.columns(3)
-    
-    # Profitability Metrics
-    with cols[0]:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.subheader("📈 Profitability")
-        for key, value in metrics["profitability"].items():
-            if value is not None:
-                st.metric(
-                    label=key.replace('_', ' ').title(),
-                    value=f"{value:.2%}" if isinstance(value, float) else value
-                )
-        st.markdown('</div>', unsafe_allow_html=True)
+    sections = [
+        ("📈 Profitability", metrics.get("profitability", {}), True),
+        ("💰 Valuation", metrics.get("valuation", {}), False),
+        ("🚀 Growth", metrics.get("growth", {}), True),
+    ]
+    for col, (title, data, is_pct) in zip(cols, sections):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"**{title}**")
+                for key, value in data.items():
+                    if value is not None:
+                        st.metric(
+                            label=key.replace('_', ' ').title(),
+                            value=f"{value:.2%}" if is_pct and isinstance(value, float) else (
+                                f"{value:.2f}" if isinstance(value, float) else value
+                            )
+                        )
 
-    # Valuation Metrics
-    with cols[1]:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.subheader("💰 Valuation")
-        for key, value in metrics["valuation"].items():
-            if value is not None:
-                st.metric(
-                    label=key.replace('_', ' ').title(),
-                    value=f"{value:.2f}" if isinstance(value, float) else value
-                )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Growth Metrics
-    with cols[2]:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.subheader("🚀 Growth")
-        for key, value in metrics["growth"].items():
-            if value is not None:
-                st.metric(
-                    label=key.replace('_', ' ').title(),
-                    value=f"{value:.2%}" if isinstance(value, float) else value
-                )
-        st.markdown('</div>', unsafe_allow_html=True)
 
 def display_risk_metrics(risk_metrics):
-    """Display risk metrics with visual indicators"""
-    st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
     st.markdown("### 🎯 Risk Analysis")
-    
-    cols = st.columns(4)
-    
-    # Volatility
-    with cols[0]:
-        volatility = risk_metrics.get("volatility")
-        if volatility:
-            st.metric(
-                "Annualized Volatility",
-                f"{volatility:.2%}",
-                delta_color="inverse"
-            )
+    with st.container(border=True):
+        cols = st.columns(4)
 
-    # Value at Risk
-    with cols[1]:
-        var = risk_metrics.get("value_at_risk")
-        if var:
-            st.metric(
-                "Daily VaR (95%)",
-                f"{var:.2%}",
-                delta_color="inverse"
-            )
+        with cols[0]:
+            volatility = risk_metrics.get("volatility")
+            if volatility:
+                st.metric("Annualized Volatility", f"{volatility:.2%}")
 
-    # Sharpe Ratio
-    with cols[2]:
-        sharpe = risk_metrics.get("sharpe_ratio")
-        if sharpe:
-            st.metric(
-                "Sharpe Ratio",
-                f"{sharpe:.2f}",
-                delta_color="normal"
-            )
+        with cols[1]:
+            var = risk_metrics.get("value_at_risk")
+            if var:
+                st.metric("Daily VaR (95%)", f"{var:.2%}")
 
-    # Risk Assessment
-    with cols[3]:
-        risk_level = risk_metrics.get("risk_assessment", "").upper()
-        if risk_level:
-            color = {
-                "LOW": "green",
-                "MEDIUM": "orange",
-                "HIGH": "red"
-            }.get(risk_level, "gray")
-            st.markdown(f"""
-                <div style='text-align: center;'>
-                    <h4>Risk Level</h4>
-                    <p style='color: {color}; font-size: 20px; font-weight: bold;'>
-                        {risk_level}
-                    </p>
-                </div>
-            """, unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+        with cols[2]:
+            sharpe = risk_metrics.get("sharpe_ratio")
+            if sharpe:
+                st.metric("Sharpe Ratio", f"{sharpe:.2f}")
+
+        with cols[3]:
+            risk_level = risk_metrics.get("risk_assessment", "").upper()
+            if risk_level:
+                color = {"LOW": "#2ca02c", "MEDIUM": "#ff9f1c", "HIGH": "#e63946"}.get(risk_level, "#888")
+                st.markdown(
+                    f"<div style='text-align:center;'>"
+                    f"<div style='opacity:0.7; font-size:0.85rem; margin-bottom:4px;'>Risk Level</div>"
+                    f"<span class='risk-pill' style='background-color:{color}22; color:{color};'>{risk_level}</span>"
+                    f"</div>",
+                    unsafe_allow_html=True
+                )
+
 
 def display_educational_page():
-    """Display educational page with investment terms and definitions"""
     st.markdown("## 📚 Investment Terms Glossary")
-    st.markdown("Understanding financial terms is crucial for making informed investment decisions. "
-                "Here's a comprehensive glossary of important investment terms used in our analysis.")
-    
+    st.markdown(
+        "Understanding financial terms is crucial for making informed investment decisions. "
+        "Here's a glossary of the terms used throughout this analysis."
+    )
     cols = st.columns(3)
     terms = list(INVESTMENT_TERMS.items())
     terms_per_col = len(terms) // 3 + (len(terms) % 3 > 0)
-    
+
     for i, col in enumerate(cols):
         with col:
             start_idx = i * terms_per_col
             end_idx = min((i + 1) * terms_per_col, len(terms))
             for term, definition in terms[start_idx:end_idx]:
-                st.markdown(f"""
-                    <div style='background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;'>
-                        <strong>{term}</strong><br>
-                        <small>{definition}</small>
-                    </div>
-                """, unsafe_allow_html=True)
+                st.markdown(
+                    f"<div class='glossary-card'><strong>{term}</strong><br><small>{definition}</small></div>",
+                    unsafe_allow_html=True
+                )
+
 
 def format_timestamp(timestamp: str) -> str:
-    """Format ISO timestamp to readable format"""
     dt = datetime.fromisoformat(timestamp)
     return dt.strftime("%I:%M:%S %p")
 
+
 def display_agent_message(agent_name: str, message: str, timestamp: str = None, status: str = "progress", result: Any = None):
-    """Display a message from an agent in a chat-like format"""
     timestamp_str = format_timestamp(timestamp) if timestamp else datetime.now().strftime("%I:%M:%S %p")
-    
     st.markdown(f"""
         <div class="agent-message">
             <div class="agent-name">
                 <span>{agent_name}</span>
                 <span class="agent-timestamp">{timestamp_str}</span>
             </div>
-            <div class="{'agent-thinking' if status == 'progress' else ''}">
-                {message}
-                {' <span class="thinking-dots">...</span>' if status == 'progress' else ''}
-            </div>
+            <div class="{'agent-thinking' if status == 'progress' else ''}">{message}</div>
             {f'<div class="agent-result">{result}</div>' if result else ''}
         </div>
     """, unsafe_allow_html=True)
 
-def display_agent_chat(crew: MarketAnalysisCrew):
-    """Display the agent chat with real-time updates"""
-    chat_placeholder = st.empty()
-    
-    with chat_placeholder.container():
-        st.markdown('<div class="agent-chat">', unsafe_allow_html=True)
-        
-        # Initialize session state for messages if not exists
-        if 'agent_messages' not in st.session_state:
-            st.session_state.agent_messages = []
-        
-        # Get new messages
-        new_messages = crew.get_agent_messages()
-        if new_messages:
-            st.session_state.agent_messages.extend(new_messages)
-        
-        # Display all messages
-        for msg in st.session_state.agent_messages:
-            display_agent_message(
-                agent_name=msg["agent"],
-                message=msg["message"],
-                timestamp=msg["timestamp"],
-                status=msg["status"],
-                result=msg["result"] if msg["status"] == "complete" else None
-            )
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Auto-scroll to bottom (using JavaScript)
-        st.markdown("""
-            <script>
-                var chat = document.querySelector('.agent-chat');
-                chat.scrollTop = chat.scrollHeight;
-            </script>
-        """, unsafe_allow_html=True)
+
+def display_agent_log():
+    """Show the full log of agent messages collected during the run."""
+    if st.session_state.get('agent_messages'):
+        with st.expander("🧠 Agent activity log", expanded=False):
+            for msg in st.session_state.agent_messages:
+                display_agent_message(
+                    agent_name=msg["agent"],
+                    message=msg["message"],
+                    timestamp=msg["timestamp"],
+                    status=msg["status"],
+                    result=msg["result"] if msg["status"] == "complete" else None
+                )
+
 
 def display_ai_analysis(results: dict):
-    """Display AI analysis results in a structured format"""
     if not results:
         return
 
@@ -492,249 +302,208 @@ def display_ai_analysis(results: dict):
         st.markdown(add_tooltips_to_text(results["raw_analysis"]), unsafe_allow_html=True)
         return
 
-    # Map analysis keys to their display names
     analysis_mapping = {
-        "market_research": "Market Research",
-        "technical_analysis": "Technical Analysis",
-        "fundamental_analysis": "Fundamental Analysis",
-        "risk_analysis": "Risk Analysis",
-        "investment_strategy": "Investment Strategy"
+        "market_research": "🔎 Market Research",
+        "technical_analysis": "📊 Technical Analysis",
+        "fundamental_analysis": "🧾 Fundamental Analysis",
+        "risk_analysis": "⚠️ Risk Analysis",
+        "investment_strategy": "🎯 Investment Strategy"
     }
 
     for key, content in results.items():
         if key == "risk_metrics":
             continue
-            
+
         display_name = analysis_mapping.get(key, key.replace('_', ' ').title())
-        st.markdown(f"<h3 class='analysis-header'>{display_name}</h3>", unsafe_allow_html=True)
-        
-        if isinstance(content, dict):
-            formatted_content = format_json_output(content)
-            formatted_content_with_tooltips = add_tooltips_to_text(formatted_content)
-            
-            st.markdown("<div class='json-output'>", unsafe_allow_html=True)
-            st.markdown(f"```json\n{formatted_content}\n```")
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            if key == "investment_strategy":
-                st.markdown("#### 📝 Key Points:")
-                st.markdown("- **Investment Thesis**: The core reasoning behind the investment recommendation")
-                st.markdown("- **Position Strategy**: Guidelines for position sizing and portfolio allocation")
-                st.markdown("- **Execution Plan**: Specific entry and exit points with timing considerations")
-                st.markdown("- **Risk Management**: Position limits and monitoring requirements")
-        else:
-            st.markdown(add_tooltips_to_text(str(content)), unsafe_allow_html=True)
+        with st.expander(display_name, expanded=(key == "investment_strategy")):
+            if isinstance(content, dict):
+                formatted_content = format_json_output(content)
+                st.markdown(f"```json\n{formatted_content}\n```")
+
+                if key == "investment_strategy":
+                    st.markdown("**Key points to look for:**")
+                    st.markdown("- **Investment Thesis** — the core reasoning behind the recommendation")
+                    st.markdown("- **Position Strategy** — sizing and portfolio allocation guidance")
+                    st.markdown("- **Execution Plan** — entry/exit points and timing")
+                    st.markdown("- **Risk Management** — position limits and monitoring")
+            else:
+                st.markdown(add_tooltips_to_text(str(content)), unsafe_allow_html=True)
+
+
+def run_analysis(ticker: str, selected_model: str):
+    """Run the crew analysis with a clean, real progress display."""
+    steps = [
+        "Gathering market data",
+        "Running market intelligence research",
+        "Running technical analysis",
+        "Running fundamental analysis",
+        "Assessing risk",
+        "Building final investment strategy",
+    ]
+
+    with st.status("Running multi-agent analysis...", expanded=True) as status_box:
+        crew = MarketAnalysisCrew(model_provider=selected_model)
+
+        status_box.write(f"Step 1/{len(steps)}: {steps[0]}")
+        analysis_results = crew.analyze_stock(ticker)
+
+        if isinstance(analysis_results, dict) and "error" in analysis_results:
+            status_box.update(label="Analysis failed", state="error")
+            reason = analysis_results.get("reason", "unknown")
+            if reason == "missing_api_key":
+                st.error("🔑 **API Key Missing** — set your API key as an environment variable.")
+                st.code("export GOOGLE_API_KEY=your_api_key_here")
+                st.info("Get a free key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
+            elif reason == "configuration_error":
+                st.error("⚙️ **Configuration Error**\n\n" + analysis_results["error"])
+            else:
+                st.error("❌ **Analysis Failed**\n\n" + analysis_results["error"])
+            return
+
+        status_box.write("Fetching stock data snapshot...")
+        stock_data_raw = crew.tools["stock_data"]._run(ticker)
+        stock_data = json.loads(stock_data_raw) if isinstance(stock_data_raw, str) else stock_data_raw
+        if isinstance(stock_data, dict) and stock_data.get("error"):
+            status_box.update(label="Analysis failed", state="error")
+            st.error(stock_data["error"])
+            return
+
+        status_box.write("Fetching financial metrics...")
+        financial_metrics_raw = crew.tools["financial_metrics"]._run(ticker)
+        financial_metrics = json.loads(financial_metrics_raw) if isinstance(financial_metrics_raw, str) else financial_metrics_raw
+        if isinstance(financial_metrics, dict) and financial_metrics.get("error"):
+            status_box.update(label="Analysis failed", state="error")
+            st.error(financial_metrics["error"])
+            return
+
+        # Pull the full agent message log for the activity expander
+        st.session_state.agent_messages = crew.get_agent_messages()
+
+        st.session_state.analysis_results = analysis_results
+        st.session_state.stock_data = stock_data
+        st.session_state.financial_metrics = financial_metrics
+        st.session_state.analyzed_ticker = ticker
+
+        status_box.update(label=f"Analysis complete for {ticker}", state="complete", expanded=False)
+
 
 def main():
-    # Sidebar
     with st.sidebar:
-        # Navigation at the top
-        st.markdown("### Navigation")
-        page = st.radio(
-            "Go to:",
-            ["Dashboard", "Educational Resources"]
-        )
-        
+        st.markdown("### 📈 Navigation")
+        page = st.radio("Go to:", ["Dashboard", "Educational Resources"], label_visibility="collapsed")
         st.markdown("---")
-        
-        st.markdown("### Stock Analysis Settings")
-        ticker = st.text_input("Enter Stock Ticker:", value="AAPL").upper()
-        
-        # LLM Provider Selection
-        st.markdown("##### AI Model Configuration")
+
+        st.markdown("### ⚙️ Stock Analysis Settings")
+        ticker = st.text_input("Stock Ticker", value="AAPL").upper()
+
+        st.markdown("##### AI Model")
         available_providers = get_available_providers()
-        
+
         if not available_providers:
-            st.warning("⚠️ No LLM providers configured!")
-            st.markdown("""
-                <div style='background-color: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;'>
-                    <strong>Quick Setup:</strong><br>
-                    1. Copy <code>.env.example</code> to <code>.env</code><br>
-                    2. Add your API key to <code>.env</code><br>
-                    3. Restart the application<br><br>
-                    <strong>Free Options:</strong><br>
-                    • <a href="https://platform.openai.com/signup">OpenAI</a> - $5 free credits<br>
-                    • <a href="https://console.anthropic.com/">Anthropic</a> - Free tier available<br>
-                    • <a href="https://makersuite.google.com/app/apikey">Google AI</a> - Free API key<br>
-                    • <a href="https://ollama.ai/">Ollama</a> - Free local models
-                </div>
-            """, unsafe_allow_html=True)
-        
-        # Provider selection
+            st.warning("⚠️ No LLM providers configured")
+            with st.expander("Quick setup"):
+                st.markdown("""
+1. Copy `.env.example` to `.env`
+2. Add your API key to `.env`
+3. Restart the app
+
+**Free options:**
+- [OpenAI](https://platform.openai.com/signup) — $5 free credit
+- [Anthropic](https://console.anthropic.com/) — free tier
+- [Google AI](https://makersuite.google.com/app/apikey) — free API key
+- [Ollama](https://ollama.ai/) — free local models
+                """)
+
         provider_options = []
         model_options = {}
-        
         for provider in available_providers:
             provider_config = LLM_PROVIDERS[provider]
             for model in provider_config["models"]:
                 display_name = f"{provider.upper()} - {model}"
-                provider_key = f"{provider}/{model}"
                 provider_options.append(display_name)
-                model_options[display_name] = provider_key
-        
+                model_options[display_name] = f"{provider}/{model}"
+
+        selected_model = None
         if provider_options:
-            selected_display = st.selectbox(
-                "Select AI Model:",
-                provider_options,
-                index=0,
-                help="Choose the AI model for analysis. Different models have different strengths and costs."
-            )
+            selected_display = st.selectbox("Select model", provider_options, index=0, label_visibility="collapsed")
             selected_model = model_options[selected_display]
-            
-            # Show model info
-            provider_name = selected_model.split('/')[0]
-            st.markdown(f"""
-                <div class="sidebar-tooltip">
-                    🤖 Using {provider_name.upper()} model. Each provider offers different analysis styles and capabilities.
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            selected_model = None
-            
+            st.caption(f"🤖 Using {selected_model.split('/')[0].upper()}")
+
         st.markdown("##### Time Period")
-        time_period = st.selectbox(
-            "Select Time Period:",
-            ["1y", "6mo", "3mo", "1mo"],
-            index=0,
-            help="Select how far back the analysis should go: 1 year (1y), 6 months (6mo), 3 months (3mo), or 1 month (1mo). This affects the historical data used in the analysis."
+        time_period = st.select_slider(
+            "Time Period",
+            options=["1mo", "3mo", "6mo", "1y"],
+            value="1y",
+            label_visibility="collapsed"
         )
-        st.markdown("""
-            <div class="sidebar-tooltip">
-                📅 This determines the timeframe of historical data used in the analysis, affecting metrics like trends, moving averages, and volatility calculations.
-            </div>
-        """, unsafe_allow_html=True)
-        
-        if st.button("Analyze Stock", type="primary"):
+        st.caption("📅 Sets the historical window used for trends, moving averages, and volatility.")
+
+        st.markdown("---")
+        analyze_clicked = st.button("🚀 Analyze Stock", type="primary", use_container_width=True)
+
+        if analyze_clicked:
             if not available_providers:
-                st.error("❌ **No LLM providers available**\n\nPlease configure at least one API key in your .env file.")
-                st.stop()
-                
-            with st.spinner("Initializing analysis..."):
+                st.error("No LLM providers available — configure an API key in `.env` first.")
+            else:
                 try:
-                    crew = MarketAnalysisCrew(model_provider=selected_model)
-                    
-                    # progress placeholder
-                    progress_placeholder = st.empty()
-                    
-                    with progress_placeholder.container():
-                        # Initialize analysis
-                        analysis_results = crew.analyze_stock(ticker)
-                        
-                        # Check if analysis returned an error
-                        if isinstance(analysis_results, dict) and "error" in analysis_results:
-                            reason = analysis_results.get("reason", "unknown")
-                            if reason == "missing_api_key":
-                                st.error("🔑 **API Key Missing**\n\nPlease set your API key as an environment variable:")
-                                st.code("export GOOGLE_API_KEY=your_api_key_here")
-                                st.info("💡 **Tip**: You can get a free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
-                            elif reason == "configuration_error":
-                                st.error("⚙️ **Configuration Error**\n\n" + analysis_results["error"])
-                            else:
-                                st.error("❌ **Analysis Failed**\n\n" + analysis_results["error"])
-                            return
-                        
-                        st.session_state.analysis_results = analysis_results
-
-                        stock_data_raw = crew.tools["stock_data"]._run(ticker)
-                        if isinstance(stock_data_raw, str):
-                            try:
-                                stock_data = json.loads(stock_data_raw)
-                            except json.JSONDecodeError:
-                                st.error("Failed to parse stock data response.")
-                                return
-                        else:
-                            stock_data = stock_data_raw
-                        if isinstance(stock_data, dict) and stock_data.get("error"):
-                            st.error(stock_data["error"])
-                            return
-                        st.session_state.stock_data = stock_data
-
-                        financial_metrics_raw = crew.tools["financial_metrics"]._run(ticker)
-                        if isinstance(financial_metrics_raw, str):
-                            try:
-                                financial_metrics = json.loads(financial_metrics_raw)
-                            except json.JSONDecodeError:
-                                st.error("Failed to parse financial metrics response.")
-                                return
-                        else:
-                            financial_metrics = financial_metrics_raw
-                        if isinstance(financial_metrics, dict) and financial_metrics.get("error"):
-                            st.error(financial_metrics["error"])
-                            return
-                        st.session_state.financial_metrics = financial_metrics
-                        
-                        # Display real-time agent chat
-                        display_agent_chat(crew)
-                        
-                        # Update every second while analysis is running
-                        while not hasattr(st.session_state, 'analysis_results'):
-                            display_agent_chat(crew)
-                            time.sleep(1)
-                    
+                    run_analysis(ticker, selected_model)
                 except ValueError as e:
-                    if "API key" in str(e).lower():
-                        st.error("🔑 **API Key Missing**\n\nPlease set your API key as an environment variable:")
+                    if "api key" in str(e).lower():
+                        st.error("🔑 **API Key Missing**")
                         st.code("export GOOGLE_API_KEY=your_api_key_here")
-                        st.info("💡 **Tip**: You can get a free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
                     else:
-                        st.error(f"⚙️ **Configuration Error**: {str(e)}")
-                    return
+                        st.error(f"⚙️ Configuration Error: {e}")
                 except Exception as e:
-                    st.error(f"❌ **Unexpected Error**: {str(e)}")
-                    st.info("Please check your configuration and try again.")
-                    return
+                    st.error(f"❌ Unexpected Error: {e}")
 
     if page == "Educational Resources":
         display_educational_page()
         return
 
-    # Main dashboard content
-    st.title("AI Stock Analysis Dashboard")
-    st.markdown("---")
+    st.markdown(
+        """
+        <div class="app-header">
+            <h1>📈 AI Stock Analysis Dashboard</h1>
+            <p>Multi-agent research, technical, fundamental, and risk analysis — powered by CrewAI</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    if hasattr(st.session_state, 'analysis_results'):
-        # Stock Overview Section
-        st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        cols = st.columns(4)
+    if 'analysis_results' in st.session_state:
         stock_data = st.session_state.stock_data
-        
-        with cols[0]:
-            st.metric("Current Price", f"${stock_data['current_price']:.2f}")
-        with cols[1]:
-            st.metric("Market Cap", f"${stock_data['market_cap']:,.0f}")
-        with cols[2]:
-            st.metric("52-Week High", f"${stock_data['52_week_high']:.2f}")
-        with cols[3]:
-            st.metric("52-Week Low", f"${stock_data['52_week_low']:.2f}")
-        st.markdown('</div>', unsafe_allow_html=True)
+        ticker_label = st.session_state.get('analyzed_ticker', '')
 
-        # Charts Section
-        st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        tab1, tab2 = st.tabs(["📈 Price Analysis", "📊 Technical Indicators"])
-        
+        st.subheader(f"Overview — {ticker_label}")
+        with st.container(border=True):
+            cols = st.columns(4)
+            cols[0].metric("Current Price", f"${stock_data['current_price']:.2f}")
+            cols[1].metric("Market Cap", f"${stock_data['market_cap']:,.0f}")
+            cols[2].metric("52-Week High", f"${stock_data['52_week_high']:.2f}")
+            cols[3].metric("52-Week Low", f"${stock_data['52_week_low']:.2f}")
+
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "📈 Price", "📊 Technical", "💵 Financials", "🎯 Risk", "🤖 AI Insights"
+        ])
+
         with tab1:
             st.plotly_chart(create_candlestick_chart(stock_data), use_container_width=True)
-        
+
         with tab2:
             st.plotly_chart(create_technical_indicators_chart(stock_data), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
-        # Financial Metrics Section
-        st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        st.markdown("### �� Financial Analysis")
-        display_metrics_dashboard(st.session_state.financial_metrics)
-        st.markdown('</div>', unsafe_allow_html=True)
+        with tab3:
+            display_metrics_dashboard(st.session_state.financial_metrics)
 
-        # Risk Metrics Section
-        display_risk_metrics(st.session_state.analysis_results.get("risk_metrics", {}))
+        with tab4:
+            display_risk_metrics(st.session_state.analysis_results.get("risk_metrics", {}))
 
-        # AI Analysis Results Section
-        st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        st.markdown("### 🤖 AI Analysis Insights")
-        display_ai_analysis(st.session_state.analysis_results)
-        st.markdown('</div>', unsafe_allow_html=True)
+        with tab5:
+            display_ai_analysis(st.session_state.analysis_results)
+            display_agent_log()
     else:
-        st.info("👈 Enter a stock ticker in the sidebar and click 'Analyze Stock' to begin analysis.")
+        st.info("👈 Enter a stock ticker in the sidebar and click **Analyze Stock** to begin.")
+
 
 if __name__ == "__main__":
-    main() 
+    main()

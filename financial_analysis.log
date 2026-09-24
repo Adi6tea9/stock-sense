@@ -1134,3 +1134,202 @@ LiteLLM completion() model= gemini-1.5-flash; provider = gemini
   }
 }
 
+2026-09-24 15:32:48,867 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 15:32:52,895 - market_analysis_crew - ERROR - Configuration error: Missing OPENAI API key. Please set OPENAI_API_KEY environment variable. Available providers with API keys: gemini
+2026-09-24 15:33:16,751 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 15:33:16,752 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 15:43:09,463 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 15:43:09,463 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 15:43:09,470 - market_analysis_crew - ERROR - Failed to initialize LLM: Google Gen AI native provider not available, to install: uv add "crewai[google-genai]"
+2026-09-24 15:45:29,496 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 15:45:29,498 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-3.6-flash
+2026-09-24 15:45:32,628 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 15:45:32,628 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 15:45:32,629 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 15:45:37,121 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 15:45:37,121 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 15:45:42,359 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 15:45:42,373 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 15:45:42,381 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 15:45:48,587 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 15:45:48,653 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 15:45:48,655 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 15:45:48,868 - root - ERROR - Google Gemini API error: 400 - Invalid JSON payload received. Unexpected token.
+verages": {"MA20": [NaN, NaN, NaN, NaN, 
+                    ^
+2026-09-24 15:45:48,872 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 15:45:48,905 - market_analysis_crew - ERROR - Error during stock analysis: EnhancedAgent.execute_task() takes from 2 to 3 positional arguments but 4 were given
+2026-09-24 15:46:20,826 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 15:46:20,826 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 15:46:23,419 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 15:56:20,853 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 15:56:20,853 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 15:56:23,333 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 16:00:56,423 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 16:00:56,423 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 16:00:59,465 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 16:01:21,270 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 16:01:21,270 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-3.6-flash
+2026-09-24 16:01:22,512 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 16:01:22,513 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 16:01:22,514 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 16:01:25,702 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:01:25,703 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:01:30,753 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:01:32,326 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:01:32,376 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:01:32,379 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:01:32,485 - root - ERROR - Google Gemini API error: 400 - Invalid JSON payload received. Unexpected token.
+verages": {"MA20": [NaN, NaN, NaN, NaN, 
+                    ^
+2026-09-24 16:01:32,491 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 16:01:32,525 - market_analysis_crew - ERROR - Error during stock analysis: EnhancedAgent.execute_task() takes from 2 to 3 positional arguments but 4 were given
+2026-09-24 16:11:06,966 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 16:11:06,967 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 16:11:09,439 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 16:11:29,131 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 16:11:29,132 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-3.6-flash
+2026-09-24 16:11:30,502 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 16:11:30,502 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 16:11:30,504 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 16:11:33,692 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:33,693 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:38,200 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:11:39,507 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:11:39,557 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:39,560 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:39,670 - root - ERROR - Google Gemini API error: 400 - Invalid JSON payload received. Unexpected token.
+verages": {"MA20": [NaN, NaN, NaN, NaN, 
+                    ^
+2026-09-24 16:11:39,675 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 16:11:42,705 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:42,706 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:46,548 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:11:47,112 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:11:47,152 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:47,154 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:47,283 - root - ERROR - Google Gemini API error: 400 - Invalid JSON payload received. Unexpected token.
+verages": {"MA20": [NaN, NaN, NaN, NaN, 
+                    ^
+2026-09-24 16:11:47,287 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 16:11:50,312 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:50,313 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:55,208 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:11:55,920 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:11:55,956 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:11:55,958 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:11:56,237 - root - ERROR - Google Gemini API error: 400 - Invalid JSON payload received. Unexpected token.
+verages": {"MA20": [NaN, NaN, NaN, NaN, 
+                    ^
+2026-09-24 16:11:56,241 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 16:11:56,263 - market_analysis_crew - ERROR - Error during stock analysis: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Invalid JSON payload received. Unexpected token.\nverages": {"MA20": [NaN, NaN, NaN, NaN, \n                    ^', 'status': 'INVALID_ARGUMENT'}}
+2026-09-24 16:30:04,539 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 16:30:04,540 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 16:30:06,919 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 16:31:02,776 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 16:31:02,777 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-3.6-flash
+2026-09-24 16:31:03,902 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 16:31:03,903 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 16:31:03,904 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 16:31:07,092 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:07,093 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:11,313 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:31:12,518 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:31:12,558 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:12,561 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:16,481 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 16:31:16,491 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:16,492 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:33,854 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:31:33,858 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:31:36,888 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:36,889 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:41,416 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:31:42,191 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:31:42,226 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:42,227 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:49,320 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 16:31:49,328 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:31:49,330 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:31:59,181 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:31:59,184 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:32:02,209 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:32:02,210 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:32:02,739 - root - ERROR - Google Gemini API error: 429 - You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-3.6-flash
+Please retry in 53.084116753s.
+2026-09-24 16:32:02,742 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-3.6-flash\nPlease retry in 53.084116753s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.6-flash', 'location': 'global'}, 'quotaValue': '5'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '53s'}]}}
+2026-09-24 16:32:02,762 - market_analysis_crew - ERROR - Error during stock analysis: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, model: gemini-3.6-flash\nPlease retry in 53.084116753s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.6-flash', 'location': 'global'}, 'quotaValue': '5'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '53s'}]}}
+2026-09-24 16:50:50,639 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 16:50:50,639 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 16:50:53,032 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 16:51:24,494 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 16:51:24,495 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-3.6-flash
+2026-09-24 16:51:25,624 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 16:51:25,625 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 16:51:25,626 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 16:51:28,810 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:51:28,811 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:51:32,314 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:51:32,318 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:51:35,346 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:51:35,347 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:51:39,686 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:51:39,693 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 16:51:41,002 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:51:41,044 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:51:41,046 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:51:56,075 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:51:56,079 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:51:59,103 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:51:59,104 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:52:08,124 - financial_tools - INFO - Fetching stock data for ticker: AAPL
+2026-09-24 16:52:08,698 - financial_tools - INFO - Successfully fetched stock data for AAPL
+2026-09-24 16:53:08,737 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:53:08,739 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:53:13,689 - market_analysis_crew - ERROR - Search failed: Could not import ddgs python package. Please install it with `pip install -U ddgs`.
+2026-09-24 16:53:13,699 - root - INFO - Gemini: Successfully validated tool 'search'
+2026-09-24 16:53:13,701 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:53:47,812 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:53:51,374 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:53:51,376 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:53:54,400 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:53:57,417 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:53:57,420 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:54:00,447 - root - INFO - Gemini: Successfully validated tool 'stock_data'
+2026-09-24 16:54:05,784 - root - ERROR - Google Gemini API error: 503 - This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+2026-09-24 16:54:05,786 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 16:54:05,805 - market_analysis_crew - ERROR - Error during stock analysis: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-09-24 17:08:23,296 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 17:08:23,297 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 17:08:26,182 - market_analysis_crew - INFO - LLM initialized successfully
+2026-09-24 17:09:04,629 - market_analysis_crew - INFO - Initializing Market Analysis Crew
+2026-09-24 17:09:04,630 - market_analysis_crew - INFO - Initializing OPENAI LLM with model: gpt-4o
+2026-09-24 17:09:05,438 - market_analysis_crew - INFO - Starting comprehensive analysis for ticker: AAPL
+2026-09-24 17:09:05,439 - market_analysis_crew - INFO - Creating specialized agents
+2026-09-24 17:09:05,440 - market_analysis_crew - INFO - Creating analysis tasks for ticker: AAPL
+2026-09-24 17:09:08,650 - root - INFO - OpenAI: Successfully validated tool 'search'
+2026-09-24 17:09:08,652 - root - INFO - OpenAI: Successfully validated tool 'stock_data'
+2026-09-24 17:09:11,781 - openai._base_client - INFO - Retrying request to /chat/completions in 0.494986 seconds
+2026-09-24 17:09:13,988 - openai._base_client - INFO - Retrying request to /chat/completions in 0.905505 seconds
+2026-09-24 17:09:15,997 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:15,997 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:16,006 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:19,040 - root - INFO - OpenAI: Successfully validated tool 'search'
+2026-09-24 17:09:19,041 - root - INFO - OpenAI: Successfully validated tool 'stock_data'
+2026-09-24 17:09:20,272 - openai._base_client - INFO - Retrying request to /chat/completions in 0.458005 seconds
+2026-09-24 17:09:21,570 - openai._base_client - INFO - Retrying request to /chat/completions in 0.756979 seconds
+2026-09-24 17:09:23,643 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:23,643 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:23,649 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:26,677 - root - INFO - OpenAI: Successfully validated tool 'search'
+2026-09-24 17:09:26,678 - root - INFO - OpenAI: Successfully validated tool 'stock_data'
+2026-09-24 17:09:27,263 - openai._base_client - INFO - Retrying request to /chat/completions in 0.397616 seconds
+2026-09-24 17:09:28,907 - openai._base_client - INFO - Retrying request to /chat/completions in 0.795952 seconds
+2026-09-24 17:09:30,192 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:30,193 - root - ERROR - OpenAI API call failed: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:30,198 - crewai.flow.runtime - ERROR - Error executing listener call_llm_native_tools: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:09:30,217 - market_analysis_crew - ERROR - Error during stock analysis: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+2026-09-24 17:14:21,711 - market_analysis_crew - INFO - Initializing LLM...
+2026-09-24 17:14:21,711 - market_analysis_crew - INFO - Initializing GEMINI LLM with model: gemini-1.5-pro-latest
+2026-09-24 17:14:24,038 - market_analysis_crew - INFO - LLM initialized successfully
